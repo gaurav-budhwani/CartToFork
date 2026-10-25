@@ -1,0 +1,5 @@
+fee_bracket,checkout_sessions,orders_placed,avg_subtotal,avg_fees,conversion_pct,abandonment_pct
+1. Low Fee (< 15%),12415,3674,639.58,32.85,29.59,70.41
+2. Moderate Fee (15-25%),1502,329,299.67,55.27,21.9,78.1
+3. High Fee (25-35%),278,94,214.69,60.72,33.81,66.19
+4. Extreme Fee Shock (> 35%),103,103,85.19,41.55,100.0,0.0
