@@ -1,0 +1,6 @@
+step_order,stage_name,sessions,drop_off_volume,step_conversion_pct,step_dropoff_pct,cumulative_conversion_pct
+1,1. App Open,41176,0,100.0,0.0,100.0
+2,2. Restaurant Discovery,32426,8750,78.75,21.25,78.75
+3,3. Add to Cart,19381,13045,59.77,40.23,47.07
+4,4. Initiate Checkout,14298,5083,73.77,26.23,34.72
+5,5. Successful Order,4200,10098,29.37,70.63,10.2
