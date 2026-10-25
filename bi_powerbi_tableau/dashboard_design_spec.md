@@ -29,7 +29,7 @@ The dashboard is structured into a clean, data-dense layout optimized for standa
 |  Abandonment Rate vs Promised Delivery Mins    ETA Delays (31.6%), Fee Surcharges (25.7%), Timeouts      |
 +----------------------------------------------------------------------------------------------------------+
 |  ROW 4: PROPOSED PRODUCT INTERVENTION & A/B CALCULATOR                                                   |
-|  Feature: Project Clarity (Upfront Menu Pricing + In-Cart Free Delivery Milestone + Flexible Pacing)    |
+|  Feature: Project Clarity (Intent-Pipelining + Basket Neutralizer + Parity Shield + Async UPI Recovery)  |
 |  Model: Target Lift Slider (+3.5%) -> Incremental Orders: +501/mo | Projected Annual GMV: +₹3,486,960    |
 +----------------------------------------------------------------------------------------------------------+
 ```

@@ -51,10 +51,11 @@ Diagnostic analysis of the 10,098 abandoned checkout sessions isolated three pri
 ---
 
 ## 4. Proposed Product Intervention: Project Clarity
-To reclaim these high-intent drop-offs, we propose **"Project Clarity: Transparent Upfront Pricing & In-Cart Milestone System"**:
-1. **Upfront Menu Pricing**: Reveal estimated delivery charges and transit times directly on restaurant menu cards, eliminating surprise price inflation at checkout.
-2. **In-Cart "Fee-Free Milestone" Progress Bar**: A dynamic progress indicator (*"Add ₹65 to unlock Free Delivery!"*) that simultaneously defends user willingness-to-pay and elevates Average Order Value (AOV).
-3. **Flexible Delivery Pacing**: Offering users a choice between *Priority (25m, standard fee)* and *Eco-Saver Pooled Delivery (40m, ₹0 fee)*, retaining price-sensitive users who would otherwise abandon.
+To resolve these friction points without relying on standard features that already exist across delivery apps, we propose **"Project Clarity"**:
+1. **Predictive Intent-Pipelining**: Trigger soft-alerts to restaurant kitchens and soft-hold nearby couriers during checkout dwell time ($\ge 20$ seconds), shaving 11 minutes off quoted checkout delivery time.
+2. **Algorithmic Basket Neutralizer**: An inline 1-tap module directly on the payment card that identifies high-margin companion items that clear free delivery thresholds, demonstrating net-zero marginal cost (e.g. *"Add ₹60 Garlic Naan: Removes ₹50 fee, net cost only +₹10"*).
+3. **Cross-App Parity Shield & 10-Minute Surge Freeze**: A 10-minute contractual price freeze coupled with a best-net-price guarantee, eliminating the incentive to switch to competing apps to compare prices.
+4. **Failsafe Async Payment Recovery**: A 5-minute background grace period for delayed UPI confirmations that keeps orders queued rather than dropping carts on timeout.
 
 ---
 
