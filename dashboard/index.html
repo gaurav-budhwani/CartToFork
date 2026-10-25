@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CartToFork | Food Delivery Product Funnel & Retention Analytics</title>
+    <meta name="description" content="CartToFork: Product funnel and retention analytics for food delivery platforms. Diagnoses drop-offs across App Open, Discovery, Cart, Checkout, and Order Success with empirical root-cause analysis and A/B test simulation.">
+    
+    <!-- Clean Inter / System Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js for analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="light-theme">
+    <div class="app-container">
+        <!-- Top Navigation & Header -->
+        <header class="top-nav">
+            <div class="nav-brand">
+                <div class="brand-text">
+                    <h1 class="brand-title">CartToFork &mdash; Funnel &amp; Retention Analytics</h1>
+                    <p class="brand-subtitle">Analysis of 41,176 Sessions, 4,200 Orders, and 500 Longitudinal Customer Cohorts</p>
+                </div>
+            </div>
+            <div class="nav-actions">
+                <span class="status-indicator">Dataset: Zomato / Swiggy &amp; FoodHub Multi-Metro Operations</span>
+                <button class="btn btn-secondary" id="btnExportData" onclick="exportSummaryData()">
+                    Export CSV
+                </button>
+            </div>
+        </header>
+
+        <!-- Global Filter Bar -->
+        <section class="filter-panel" id="filterBar">
+            <div class="filter-group">
+                <label for="filterPlatform">Platform</label>
+                <select id="filterPlatform" onchange="applyGlobalFilters()">
+                    <option value="All">All Platforms (iOS, Android, Web)</option>
+                    <option value="iOS">iOS</option>
+                    <option value="Android">Android</option>
+                    <option value="Web">Web</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filterCity">Metro Market</label>
+                <select id="filterCity" onchange="applyGlobalFilters()">
+                    <option value="All">All Metros (5 Clusters)</option>
+                    <option value="Mumbai">Mumbai</option>
+                    <option value="Bengaluru">Bengaluru</option>
+                    <option value="Delhi NCR">Delhi NCR</option>
+                    <option value="Hyderabad">Hyderabad</option>
+                    <option value="Pune">Pune</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filterSegment">Customer Segment</label>
+                <select id="filterSegment" onchange="applyGlobalFilters()">
+                    <option value="All">All Segments</option>
+                    <option value="New User">New Users</option>
+                    <option value="Occasional / Casual">Occasional / Casual</option>
+                    <option value="Power User / Loyalist">Power User / Loyalist</option>
+                    <option value="Deal Seeker">Deal Seekers</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filterDiscount">Discount Usage</label>
+                <select id="filterDiscount" onchange="applyGlobalFilters()">
+                    <option value="All">All Sessions</option>
+                    <option value="Discount Applied">Discount Applied</option>
+                    <option value="No Discount">No Discount (Organic)</option>
+                </select>
+            </div>
+            <div class="filter-reset">
+                <button class="btn btn-outline" id="btnResetFilters" onclick="resetFilters()">Reset Filters</button>
+            </div>
+        </section>
+
+        <!-- Executive KPI Banner -->
+        <section class="kpi-banner">
+            <div class="kpi-card">
+                <div class="kpi-title">Total Sessions</div>
+                <div class="kpi-value" id="kpiSessions">41,176</div>
+                <div class="kpi-meta">100% Funnel Baseline</div>
+            </div>
+            
+            <div class="kpi-card">
+                <div class="kpi-title">End-to-End Conversion</div>
+                <div class="kpi-value highlight-primary" id="kpiConvRate">10.20%</div>
+                <div class="kpi-meta">App Open to Order Success</div>
+            </div>
+
+            <div class="kpi-card alert-card">
+                <div class="kpi-title">Critical Bottleneck</div>
+                <div class="kpi-value highlight-danger" id="kpiDropoff">70.63%</div>
+                <div class="kpi-meta">Stage 4 Checkout Drop-Off (10,098 lost)</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-title">Successful Orders</div>
+                <div class="kpi-value" id="kpiOrders">4,200</div>
+                <div class="kpi-meta">499 Repeat Buyers (99.8%)</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-title">D30 Retention Rate</div>
+                <div class="kpi-value highlight-primary" id="kpiRetention">45.83%</div>
+                <div class="kpi-meta">Active Longitudinal Cohort</div>
+            </div>
+        </section>
+
+        <!-- Navigation Tabs -->
+        <nav class="tab-navigation">
+            <button class="tab-btn active" id="tabFunnel" onclick="switchTab('funnel')">
+                1. Funnel Conversion Flow
+            </button>
+            <button class="tab-btn" id="tabDiagnostic" onclick="switchTab('diagnostic')">
+                2. Root-Cause Diagnostics
+            </button>
+            <button class="tab-btn" id="tabRetention" onclick="switchTab('retention')">
+                3. Retention &amp; Cohorts
+            </button>
+            <button class="tab-btn" id="tabIntervention" onclick="switchTab('intervention')">
+                4. Proposed Product Change &amp; A/B Simulator
+            </button>
+            <button class="tab-btn" id="tabAssets" onclick="switchTab('assets')">
+                5. SQL &amp; BI Model Assets
+            </button>
+        </nav>
+
+        <!-- TAB CONTENT 1: Product Funnel Flow -->
+        <main class="tab-pane active" id="pane-funnel">
+            <div class="grid-2-col">
+                <!-- Visual Funnel Chart -->
+                <div class="panel-card">
+                    <div class="card-header">
+                        <div>
+                            <h2 class="card-title">User Journey Progression &amp; Drop-Off</h2>
+                            <p class="card-sub">Session volume advancing through each step from initial launch to confirmed purchase</p>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="chartFunnelWaterfall"></canvas>
+                    </div>
+                </div>
+
+                <!-- Funnel Stage Breakdown Table -->
+                <div class="panel-card">
+                    <div class="card-header">
+                        <div>
+                            <h2 class="card-title">Stage-over-Stage Conversion Matrix</h2>
+                            <p class="card-sub">Pass-through volume and drop-off rate at each step</p>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table" id="tableFunnelSummary">
+                            <thead>
+                                <tr>
+                                    <th>Funnel Step</th>
+                                    <th>Sessions Reached</th>
+                                    <th>Step Conversion</th>
+                                    <th>Step Drop-off</th>
+                                    <th>Cumulative Conv</th>
+                                </tr>
+                            </thead>
+                            <tbody id="funnelTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="note-box mt-3">
+                        <div class="note-header">KEY INSIGHT</div>
+                        <p><strong>Stage 4 (Checkout Start) to Stage 5 (Order Success) is the primary conversion bottleneck:</strong> While 14,298 users built a food basket and entered checkout, <strong>10,098 abandoned at the payment screen (70.63% drop-off)</strong>. Addressing checkout friction provides over 3x greater conversion leverage than top-of-funnel discovery improvements.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Segment Comparisons -->
+            <div class="grid-3-col mt-4">
+                <div class="panel-card">
+                    <h3 class="card-title">Checkout Conversion by Platform</h3>
+                    <p class="card-sub">Comparison across iOS, Android, and Web</p>
+                    <div class="chart-wrapper-sm">
+                        <canvas id="chartPlatformFunnel"></canvas>
+                    </div>
+                </div>
+                <div class="panel-card">
+                    <h3 class="card-title">Checkout Conversion by City</h3>
+                    <p class="card-sub">Performance across 5 metropolitan clusters</p>
+                    <div class="chart-wrapper-sm">
+                        <canvas id="chartCityFunnel"></canvas>
+                    </div>
+                </div>
+                <div class="panel-card">
+                    <h3 class="card-title">Impact of Discount Usage</h3>
+                    <p class="card-sub">Organic sessions vs Discount-applied checkouts</p>
+                    <div class="chart-wrapper-sm">
+                        <canvas id="chartDiscountFunnel"></canvas>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- TAB CONTENT 2: Root Cause Diagnostics -->
+        <section class="tab-pane" id="pane-diagnostic">
+            <div class="panel-card mb-4">
+                <h2 class="card-title">Diagnostic Investigation: Why Did 10,098 Users Abandon at Checkout?</h2>
+                <p class="card-sub">Analysis of delivery ETAs, platform surcharges, payment gateways, and voucher validation logs for all 14,298 checkout sessions.</p>
+            </div>
+
+            <div class="grid-2-col">
+                <!-- Diagnostic 1: ETA Friction Curve -->
+                <div class="panel-card">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title">Delivery ETA Sensitivity Curve</h3>
+                            <p class="card-sub">Abandonment rate relative to promised delivery time</p>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="chartEtaSensitivity"></canvas>
+                    </div>
+                    <div class="metric-callout-grid mt-3">
+                        <div class="mini-stat">
+                            <span class="stat-lbl">&lt; 25 mins</span>
+                            <span class="stat-val highlight-primary">0.0% Abandon</span>
+                        </div>
+                        <div class="mini-stat">
+                            <span class="stat-lbl">25–39 mins</span>
+                            <span class="stat-val">64.97% Abandon</span>
+                        </div>
+                        <div class="mini-stat">
+                            <span class="stat-lbl">40–54 mins</span>
+                            <span class="stat-val highlight-danger">76.42% Abandon</span>
+                        </div>
+                        <div class="mini-stat">
+                            <span class="stat-lbl">55+ mins</span>
+                            <span class="stat-val highlight-danger">85.76% Abandon</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Diagnostic 2: Checkout Abandonment Breakdown -->
+                <div class="panel-card">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title">Primary Checkout Drop-off Reasons</h3>
+                            <p class="card-sub">Categorization of 10,098 checkout drop-offs</p>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="chartFailureReasons"></canvas>
+                    </div>
+                    <div class="diagnostic-summary-list mt-3">
+                        <div class="diag-item">
+                            <span class="diag-name"><strong>1. ETA Delay (&gt;40m):</strong> 3,193 sessions (31.62%)</span>
+                        </div>
+                        <div class="diag-item">
+                            <span class="diag-name"><strong>2. Fee Surcharges (Delivery + Service):</strong> 2,595 sessions (25.70%)</span>
+                        </div>
+                        <div class="diag-item">
+                            <span class="diag-name"><strong>3. Price Comparison / Hesitation:</strong> 1,907 sessions (18.88%)</span>
+                        </div>
+                        <div class="diag-item">
+                            <span class="diag-name"><strong>4. Payment Gateway Timeouts:</strong> 1,873 sessions (18.55%)</span>
+                        </div>
+                        <div class="diag-item">
+                            <span class="diag-name"><strong>5. Promo Restriction Barrier:</strong> 530 sessions (5.25%)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Root Cause Explanations -->
+            <div class="grid-3-col mt-4">
+                <div class="panel-card">
+                    <h3 class="card-title">1. Late Fee Disclosure</h3>
+                    <p class="card-sub mt-2">Delivery and convenience fees are not displayed during menu browsing. When added at the final screen, orders under ₹250 face fees representing 20% to 35% of total food cost, triggering drop-off.</p>
+                </div>
+                <div class="panel-card">
+                    <h3 class="card-title">2. ETA Inflation at Checkout</h3>
+                    <p class="card-sub mt-2">Menu cards often display 25–30 minute estimates. When real-time courier dispatch re-estimates to 50+ minutes at checkout, 85.8% of users abandon the transaction.</p>
+                </div>
+                <div class="panel-card">
+                    <h3 class="card-title">3. Payment Gateway Timeouts</h3>
+                    <p class="card-sub mt-2">18.6% of lost users attempted payment but experienced UPI app-switch timeouts or OTP validation failures, representing involuntary loss of high-intent orders.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB CONTENT 3: Retention & Cohorts -->
+        <section class="tab-pane" id="pane-retention">
+            <div class="grid-2-col">
+                <!-- Cohort Retention Heatmap -->
+                <div class="panel-card">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title">Monthly Cohort Retention (Active Sessions)</h3>
+                            <p class="card-sub">User activity at Day 1, Day 7, Day 14, and Day 30 following signup</p>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Signup Cohort</th>
+                                    <th>Cohort Size</th>
+                                    <th>Day 1</th>
+                                    <th>Day 7</th>
+                                    <th>Day 14</th>
+                                    <th>Day 30</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>2023-12</td><td>46 users</td><td>0.00%</td><td>10.87%</td><td>15.22%</td><td>41.30%</td></tr>
+                                <tr><td>2024-01</td><td>41 users</td><td>12.20%</td><td>24.39%</td><td>31.71%</td><td>51.22%</td></tr>
+                                <tr><td>2024-02</td><td>44 users</td><td>22.73%</td><td>29.55%</td><td>31.82%</td><td>40.91%</td></tr>
+                                <tr><td>2024-03</td><td>48 users</td><td>31.25%</td><td>31.25%</td><td>50.00%</td><td>37.50%</td></tr>
+                                <tr><td>2024-04</td><td>44 users</td><td>11.36%</td><td>38.64%</td><td>36.36%</td><td>34.09%</td></tr>
+                                <tr><td>2024-05</td><td>48 users</td><td>16.67%</td><td>31.25%</td><td>39.58%</td><td>45.83%</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Re-order Velocity -->
+                <div class="panel-card">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title">Re-Order Velocity: Days Between 1st and 2nd Order</h3>
+                            <p class="card-sub">Comparison of Organic First Orders vs Discount-Subsidized First Orders</p>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="chartReorderVelocity"></canvas>
+                    </div>
+                    <div class="note-box mt-3">
+                        <div class="note-header">RETENTION OBSERVATION</div>
+                        <p><strong>Organic first-order customers place their second order 5.05 days faster (38.90 vs 43.95 days)</strong> than discount-incentivized customers. Heavy initial promotions attract deal-sensitive users who take longer to form a recurring order habit.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer Frequency Breakdown -->
+            <div class="grid-4-col mt-4">
+                <div class="kpi-card">
+                    <div class="kpi-title">Power Users (6+ Orders)</div>
+                    <div class="kpi-value">84.6%</div>
+                    <div class="kpi-meta">423 / 500 Transacting Customers</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-title">Active Customers (3–5 Orders)</div>
+                    <div class="kpi-value">15.0%</div>
+                    <div class="kpi-meta">75 / 500 Transacting Customers</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-title">First Repeat (2 Orders)</div>
+                    <div class="kpi-value">0.2%</div>
+                    <div class="kpi-meta">1 Customer in Cohort</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-title">One-and-Done Churn</div>
+                    <div class="kpi-value highlight-danger">0.2%</div>
+                    <div class="kpi-meta">1 Single-Order Customer</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB CONTENT 4: Product Intervention & A/B Simulator -->
+        <section class="tab-pane" id="pane-intervention">
+            <div class="panel-card mb-4">
+                <h2 class="card-title">Proposed Product Intervention: "Project Clarity"</h2>
+                <p class="card-sub">An economic and UX intervention to reduce checkout abandonment through upfront fee disclosure, in-cart delivery milestones, and flexible delivery pacing.</p>
+            </div>
+
+            <!-- Interactive A/B Test Simulator -->
+            <div class="grid-2-col">
+                <div class="panel-card">
+                    <h3 class="card-title">A/B Experiment Impact Calculator</h3>
+                    <p class="card-sub">Model expected order and revenue lift from checkout optimization</p>
+                    
+                    <div class="sim-input-group mt-3">
+                        <div class="slider-header">
+                            <label for="sliderLift">Target Checkout Conversion Lift (%):</label>
+                            <span class="slider-val" id="valLift">+3.5%</span>
+                        </div>
+                        <input type="range" id="sliderLift" min="0.5" max="8.0" step="0.5" value="3.5" oninput="updateSimulator()">
+                    </div>
+
+                    <div class="sim-input-group mt-3">
+                        <div class="slider-header">
+                            <label for="sliderAov">Average Order Subtotal (₹):</label>
+                            <span class="slider-val" id="valAov">₹580</span>
+                        </div>
+                        <input type="range" id="sliderAov" min="300" max="900" step="20" value="580" oninput="updateSimulator()">
+                    </div>
+
+                    <div class="sim-input-group mt-3">
+                        <div class="slider-header">
+                            <label for="sliderTraffic">Monthly Checkout Sessions:</label>
+                            <span class="slider-val" id="valTraffic">14,300</span>
+                        </div>
+                        <input type="range" id="sliderTraffic" min="5000" max="50000" step="1000" value="14300" oninput="updateSimulator()">
+                    </div>
+
+                    <div class="milestone-preview mt-4">
+                        <div class="preview-header">FEATURE SPECIFICATION: IN-CART MILESTONE BAR</div>
+                        <div class="preview-box">
+                            <div class="preview-text">Add <strong>₹65</strong> more to qualify for <strong>Free Delivery</strong></div>
+                            <div class="preview-progress">
+                                <div class="progress-fill" style="width: 82%;"></div>
+                            </div>
+                            <div class="preview-addons">
+                                <span class="addon-chip">+ Garlic Naan (₹70)</span>
+                                <span class="addon-chip">+ Masala Chaas (₹65)</span>
+                                <span class="addon-chip">+ Gulab Jamun (₹80)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-card">
+                    <h3 class="card-title">Projected Experiment Returns</h3>
+                    <p class="card-sub">Model outputs based on 50/50 randomized controlled trial</p>
+
+                    <div class="sim-kpi-grid mt-3">
+                        <div class="sim-kpi-box">
+                            <span class="sim-kpi-lbl">New Checkout Conversion</span>
+                            <span class="sim-kpi-num" id="resNewConv">32.87%</span>
+                            <span class="sim-kpi-sub">Baseline: 29.37%</span>
+                        </div>
+                        <div class="sim-kpi-box">
+                            <span class="sim-kpi-lbl">Incremental Monthly Orders</span>
+                            <span class="sim-kpi-num highlight-primary" id="resIncOrders">+501 Orders</span>
+                            <span class="sim-kpi-sub">Reclaimed from Abandonment</span>
+                        </div>
+                        <div class="sim-kpi-box">
+                            <span class="sim-kpi-lbl">Incremental Monthly GMV</span>
+                            <span class="sim-kpi-num" id="resIncGmv">₹290,580</span>
+                            <span class="sim-kpi-sub">Gross Merchandise Value</span>
+                        </div>
+                        <div class="sim-kpi-box">
+                            <span class="sim-kpi-lbl">Annualized Revenue Lift</span>
+                            <span class="sim-kpi-num" id="resAnnualGmv">₹3,486,960</span>
+                            <span class="sim-kpi-sub">At 100% Production Rollout</span>
+                        </div>
+                    </div>
+
+                    <div class="guardrail-section mt-4">
+                        <h4 class="guardrail-title">EXPERIMENT GUARDRAILS &amp; LAUNCH CRITERIA</h4>
+                        <div class="guardrail-item">
+                            <span><strong>Primary Metric:</strong> Checkout-to-Order Conversion Rate (MDE: +2.5% absolute lift, Alpha=0.05, Power=0.80).</span>
+                        </div>
+                        <div class="guardrail-item">
+                            <span><strong>Contribution Margin Guardrail:</strong> Waived delivery fees must be offset by milestone AOV growth (Max allowable margin loss: -₹8.00/order).</span>
+                        </div>
+                        <div class="guardrail-item">
+                            <span><strong>Fulfillment SLA Guardrail:</strong> Courier batching must not increase delivery transit time by more than 4 minutes.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB CONTENT 5: SQL & BI Model Assets -->
+        <section class="tab-pane" id="pane-assets">
+            <div class="grid-2-col">
+                <div class="panel-card">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title">Production SQL Query Library</h3>
+                            <p class="card-sub">Standard ANSI SQL compatible with PostgreSQL, DuckDB, Snowflake, BigQuery, and SQLite</p>
+                        </div>
+                        <button class="btn btn-outline btn-sm" onclick="copyCode('sqlBlock')">Copy SQL</button>
+                    </div>
+                    <pre class="code-pre"><code id="sqlBlock">-- Query 01: Overall Funnel Conversion &amp; Drop-off Calculation
+WITH session_stages AS (
+    SELECT 
+        s.session_id,
+        1 AS reached_app_open,
+        MAX(CASE WHEN e.event_name IN ('view_restaurant', 'view_item') THEN 1 ELSE 0 END) AS reached_discovery,
+        MAX(CASE WHEN e.event_name IN ('add_to_cart', 'view_cart') THEN 1 ELSE 0 END) AS reached_add_to_cart,
+        MAX(CASE WHEN e.event_name = 'initiate_checkout' THEN 1 ELSE 0 END) AS reached_checkout,
+        MAX(CASE WHEN e.event_name = 'order_success' THEN 1 ELSE 0 END) AS reached_order_success
+    FROM sessions s
+    LEFT JOIN events e ON s.session_id = e.session_id
+    GROUP BY s.session_id
+)
+SELECT 
+    COUNT(session_id) AS total_sessions,
+    SUM(reached_discovery) AS discovery_sessions,
+    SUM(reached_add_to_cart) AS cart_sessions,
+    SUM(reached_checkout) AS checkout_sessions,
+    SUM(reached_order_success) AS orders_placed,
+    ROUND(100.0 * SUM(reached_order_success) / COUNT(session_id), 2) AS end_to_end_conversion_pct,
+    ROUND(100.0 * (1.0 - SUM(reached_order_success) * 1.0 / NULLIF(SUM(reached_checkout), 0)), 2) AS checkout_abandonment_pct
+FROM session_stages;</code></pre>
+                </div>
+
+                <div class="panel-card">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title">Power BI DAX &amp; Tableau Formulas</h3>
+                            <p class="card-sub">Calculated measures for BI implementations</p>
+                        </div>
+                        <button class="btn btn-outline btn-sm" onclick="copyCode('daxBlock')">Copy DAX</button>
+                    </div>
+                    <pre class="code-pre"><code id="daxBlock">// DAX Measure: Checkout Drop-off Rate (%)
+Checkout Dropoff Rate Pct = 
+VAR CheckoutSessions = 
+    CALCULATE(
+        DISTINCTCOUNT(fact_sessions[session_id]), 
+        fact_sessions[max_funnel_stage] IN {"4_checkout", "5_order_success"}
+    )
+VAR SuccessfulOrders = 
+    CALCULATE(
+        DISTINCTCOUNT(fact_sessions[session_id]), 
+        fact_sessions[max_funnel_stage] = "5_order_success"
+    )
+RETURN
+    (1 - DIVIDE(SuccessfulOrders, CheckoutSessions, 0)) * 100
+
+// DAX Measure: 30-Day Repeat Order Rate (%)
+Repeat Order Rate 30D = 
+VAR TotalBuyers = DISTINCTCOUNT(fact_orders[user_id])
+VAR RepeatBuyers = 
+    CALCULATE(
+        DISTINCTCOUNT(fact_orders[user_id]), 
+        fact_orders[order_sequence_number] &gt;= 2
+    )
+RETURN
+    DIVIDE(RepeatBuyers, TotalBuyers, 0) * 100</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>Food Delivery Product Funnel &amp; Retention Analytics · Built with SQL, Python, Tableau/Power BI Schemas</p>
+            <p class="footer-meta">Empirical telemetry harmonized from 4,200 orders, 500 customer profiles, and multi-metro delivery records.</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
