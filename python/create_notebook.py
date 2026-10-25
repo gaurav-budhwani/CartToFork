@@ -173,16 +173,16 @@ notebook = {
             "metadata": {},
             "source": [
                 "## 6. Proposed Product Intervention: Project Clarity\n",
-                "### Practical Checkout Optimization for Food Delivery\n",
-                "1. **Auto-Applied Best Coupon**: Automatically tests and applies the highest savings promo code to eliminate fee shock.\n",
-                "2. **One-Tap In-App UPI Checkout**: Native UPI Lite payments for orders under ₹500, eliminating external app-switching drops.\n",
-                "3. **On-Time Delivery Guarantee**: Guaranteed delivery time or ₹50 wallet credit automatically, removing ETA anxiety.\n",
+                "### Practical, Sustainable Checkout Optimization for Food Delivery\n",
+                "1. **Smart Cart Migration**: 1-tap option to transfer cart to a faster nearby kitchen when ETA exceeds 40 mins, retaining hungry users without delay penalty costs.\n",
+                "2. **Neighborhood Route Pooling**: Unlocks ₹0 delivery fee for solo diners (under ₹250) when another order is already heading to their apartment building, cutting courier costs.\n",
+                "3. **Persistent Cart Vault**: Caches cart state for 15 mins during UPI timeouts with 1-tap retry and Pay on Delivery fallback, preventing cart-loss churn.\n",
                 "\n",
                 "---\n",
                 "## 7. A/B Testing Measurement Framework\n",
                 "- **Primary Metric**: Checkout-to-Order Conversion Rate (Baseline 29.37%, Target: +3.5% lift to 32.87%).\n",
                 "- **Power Analysis**: Alpha = 0.05, Power = 0.80, MDE = 2.5%, Required Sample Size = ~25,300 sessions (21-day runtime).\n",
-                "- **Guardrails**: Net contribution margin per order (within -₹6.00), late delivery breach rate (<3.5%)."
+                "- **Guardrails**: Net contribution margin per order (within -₹3.00), courier pooled transit variance (<3 mins)."
             ]
         }
     ],

@@ -51,10 +51,10 @@ Diagnostic analysis of the 10,098 abandoned checkout sessions isolated three pri
 ---
 
 ## 4. Proposed Product Intervention: Project Clarity
-To resolve these friction points with realistic, easy-to-build solutions, we propose **"Project Clarity"**:
-1. **Auto-Applied Best Coupon**: The checkout engine automatically tests all available restaurant and bank offers in the background and applies the single highest discount to the cart, eliminating coupon hunting and softening fee shock.
-2. **One-Tap In-App UPI Checkout**: Native UPI Lite and saved account payments for orders under ₹500, eliminating the need to leave the food app and preventing redirect timeouts and memory crashes.
-3. **On-Time Delivery Guarantee**: A clear guarantee right on the checkout card: *"Delivered by 8:45 PM or get ₹50 in your wallet automatically."* This removes anxiety over 40–50 minute ETAs and ensures any delayed customer receives wallet credits that drive repeat orders.
+To resolve checkout friction without creating financial liabilities or unrealistic engineering hurdles, we propose **"Project Clarity"**:
+1. **Smart Cart Migration**: When checkout detects an ETA $>40$ minutes due to restaurant backlog, a 1-tap card allows users to transfer equivalent dishes to a nearby top-rated kitchen delivering in 20 minutes, retaining hungry users who would otherwise churn.
+2. **Neighborhood Route Pooling**: For solo diners with small carts (₹180–₹250), the system checks if a courier is already en route to their apartment complex from the same food cluster, offering ₹0 delivery fee. This cuts platform courier costs while solving the solo fee barrier.
+3. **Persistent Cart Vault & Payment Recovery**: Instead of emptying the cart when an external UPI redirect or OTP lags, the cart is cached for 15 minutes with a friendly 1-tap retry and Pay on Delivery fallback, preventing technical drop-offs from becoming lost customers.
 
 ---
 
