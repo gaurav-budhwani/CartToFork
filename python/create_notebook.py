@@ -173,17 +173,16 @@ notebook = {
             "metadata": {},
             "source": [
                 "## 6. Proposed Product Intervention: Project Clarity\n",
-                "### Industry-First Checkout Optimization & Frictional Drop-off Mitigation Engine\n",
-                "1. **Predictive Intent-Pipelining**: Trigger soft-alerts to kitchens and soft-lock couriers during checkout dwell (>=20s), saving 11 mins on checkout ETA.\n",
-                "2. **Algorithmic Basket Neutralizer**: 1-tap inline net-cost fee offset on the payment card (e.g. 'Add Garlic Naan (+₹60): Removes ₹50 delivery fee, net order increases only +₹10!').\n",
-                "3. **Cross-App Parity Shield & 10-Minute Surge Lock**: Contractually freeze cart prices for 10 minutes and guarantee best net price to kill multi-tab comparison shopping.\n",
-                "4. **Grace-Period Async Order Dispatch**: 5-minute background window for delayed UPI bank confirmations.\n",
+                "### Practical Checkout Optimization for Food Delivery\n",
+                "1. **Auto-Applied Best Coupon**: Automatically tests and applies the highest savings promo code to eliminate fee shock.\n",
+                "2. **One-Tap In-App UPI Checkout**: Native UPI Lite payments for orders under ₹500, eliminating external app-switching drops.\n",
+                "3. **On-Time Delivery Guarantee**: Guaranteed delivery time or ₹50 wallet credit automatically, removing ETA anxiety.\n",
                 "\n",
                 "---\n",
                 "## 7. A/B Testing Measurement Framework\n",
                 "- **Primary Metric**: Checkout-to-Order Conversion Rate (Baseline 29.37%, Target: +3.5% lift to 32.87%).\n",
                 "- **Power Analysis**: Alpha = 0.05, Power = 0.80, MDE = 2.5%, Required Sample Size = ~25,300 sessions (21-day runtime).\n",
-                "- **Guardrails**: Contribution margin per order, merchant food waste rate (<0.5%), courier restaurant dwell time."
+                "- **Guardrails**: Net contribution margin per order (within -₹6.00), late delivery breach rate (<3.5%)."
             ]
         }
     ],

@@ -51,11 +51,10 @@ Diagnostic analysis of the 10,098 abandoned checkout sessions isolated three pri
 ---
 
 ## 4. Proposed Product Intervention: Project Clarity
-To resolve these friction points without relying on standard features that already exist across delivery apps, we propose **"Project Clarity"**:
-1. **Predictive Intent-Pipelining**: Trigger soft-alerts to restaurant kitchens and soft-hold nearby couriers during checkout dwell time ($\ge 20$ seconds), shaving 11 minutes off quoted checkout delivery time.
-2. **Algorithmic Basket Neutralizer**: An inline 1-tap module directly on the payment card that identifies high-margin companion items that clear free delivery thresholds, demonstrating net-zero marginal cost (e.g. *"Add ₹60 Garlic Naan: Removes ₹50 fee, net cost only +₹10"*).
-3. **Cross-App Parity Shield & 10-Minute Surge Freeze**: A 10-minute contractual price freeze coupled with a best-net-price guarantee, eliminating the incentive to switch to competing apps to compare prices.
-4. **Failsafe Async Payment Recovery**: A 5-minute background grace period for delayed UPI confirmations that keeps orders queued rather than dropping carts on timeout.
+To resolve these friction points with realistic, easy-to-build solutions, we propose **"Project Clarity"**:
+1. **Auto-Applied Best Coupon**: The checkout engine automatically tests all available restaurant and bank offers in the background and applies the single highest discount to the cart, eliminating coupon hunting and softening fee shock.
+2. **One-Tap In-App UPI Checkout**: Native UPI Lite and saved account payments for orders under ₹500, eliminating the need to leave the food app and preventing redirect timeouts and memory crashes.
+3. **On-Time Delivery Guarantee**: A clear guarantee right on the checkout card: *"Delivered by 8:45 PM or get ₹50 in your wallet automatically."* This removes anxiety over 40–50 minute ETAs and ensures any delayed customer receives wallet credits that drive repeat orders.
 
 ---
 

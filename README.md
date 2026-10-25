@@ -148,59 +148,51 @@ While top-of-funnel drop-off is common during casual browsing, **the largest con
 ---
 
 ## 5. Product Recommendation: Project Clarity
-### Industry-First Checkout Optimization & Frictional Drop-off Mitigation Engine
+### Practical and High-Impact Checkout Optimization
 
-Standard industry interventions—such as static "Add ₹X for Free Delivery" banners or basic priority delivery fees—already exist across Swiggy and Zomato, yet checkout abandonment remains persistently high. To resolve the root causes identified in our diagnostics, **Project Clarity introduces three novel, industry-first mechanisms**:
+To resolve the root causes of checkout abandonment with realistic, easy-to-build solutions, **Project Clarity proposes three practical features**:
 
 ```
 +──────────────────────────────────────────────────────────────────────────────────────────────────+
 |                                  PROJECT CLARITY PRODUCT PILLARS                                 |
 +───────────────────────────────────+───────────────────────────────────+──────────────────────────+
-|  1. INTENT-PIPELINING             |  2. BASKET NEUTRALIZER            |  3. PARITY SHIELD        |
-|  Predictive kitchen pre-warm &    |  1-tap marginal net-cost fee      |  10-min surge freeze &   |
-|  courier soft-lock during dwell   |  offset without leaving checkout  |  cross-app price guarantee
+|  1. AUTO-APPLIED BEST COUPON      |  2. ONE-TAP UPI CHECKOUT          |  3. ON-TIME ETA GUARANTEE|
+|  Automatically finds and applies  |  No app switching; instant 1-tap  |  ₹50 wallet credit if late|
+|  highest discount at checkout     |  payment for orders under ₹500    |  removes delivery anxiety |
 +───────────────────────────────────+───────────────────────────────────+──────────────────────────+
 ```
 
-### The Three Novel Pillars:
+### The Three Pillars Explained:
 
-1. **Predictive Intent-Pipelining (Pre-Cook Soft-Alert & Rider Soft-Lock)**:
-   - *Behavioral Root Cause Addressed*: Extended delivery ETA delays >40m (31.62% of drop-offs).
-   - *Mechanism*: When a user dwells on checkout for $\ge 20$ seconds entering addresses or payment details, the dispatch engine soft-alerts the restaurant KDS to stage ingredients and soft-holds an idle courier within 500m.
-   - *Checkout Dynamic Incentive*: *"Your kitchen slot and rider are held. Complete checkout in 90 seconds to shave 11 minutes off delivery (Guaranteed 24m ETA instead of 35m)."*
-   - *Fulfillment Edge*: If payment completes, cooking begins instantly and courier transit is pre-matched, cutting 11 minutes off delivery. If abandoned, the soft-hold releases with zero food waste.
+1. **Auto-Applied Best Coupon**:
+   - *Problem*: Users leave checkout because they have to manually find, copy, and test coupons, or because delivery fees make the cart feel too expensive (25.70% of drops).
+   - *Solution*: The checkout engine automatically tests all restaurant, platform, and bank offers in the background and applies the single best coupon to the user's cart.
+   - *User Experience*: A clear savings badge appears above the payment total: *"Best Offer Auto-Applied: 'FEAST50' saved you ₹50 on this cart."*
+   - *Impact*: Reduces fee shock instantly without requiring manual effort.
 
-2. **Algorithmic Basket Neutralizer (1-Tap Marginal Net-Cost Fee Offset)**:
-   - *Behavioral Root Cause Addressed*: Fee shock when delivery/platform fees exceed 20% of cart subtotal (25.70% of drop-offs).
-   - *Mechanism*: Instead of forcing users to leave checkout and search through 200 menu items, an optimization algorithm scans the restaurant's menu for high-margin, quick-pack companion items that clear the free delivery threshold.
-   - *Inline Payment Card UI*:
-     ```
-     ┌────────────────────────────────────────────────────────────────────────┐
-     │  1-Tap Fee Neutralizer: Add Garlic Naan (₹70)                          │
-     │  Unlocks Free Delivery and removes your ₹50 Delivery Fee.               │
-     │  Net order cost increases by only +₹20 to receive a ₹70 item!          │
-     │  [ + Add Item & Neutralize Delivery Fee ]                              │
-     └────────────────────────────────────────────────────────────────────────┘
-     ```
-   - *Economic Value*: The user gains ₹70 in food value for ₹20 net cash; the restaurant increases food sales; platform take-rate expands on higher GMV.
+2. **One-Tap UPI Checkout (In-App Payments)**:
+   - *Problem*: 18.55% of drops occur when users are redirected to external apps (Google Pay, PhonePe, Paytm), leading to phone memory lag, OTP delays, and payment timeouts.
+   - *Solution*: Implement native in-app **UPI Lite and 1-tap saved account payments** for routine food orders under ₹500.
+   - *User Experience*: A simple "Slide to Pay" button completes the transaction in under 2 seconds without leaving the food delivery app.
+   - *Impact*: Cuts payment drop-off rates by over 50% by eliminating external app redirects.
 
-3. **Cross-App Parity Shield & 10-Minute Surge Lock**:
-   - *Behavioral Root Cause Addressed*: Multi-tab comparison shopping between competing delivery aggregators (18.88% of drop-offs).
-   - *Mechanism*: Contractually locks dish prices, taxes, and surge multipliers for 10 minutes (*"Total bill locked for 10:00"*), backed by an automated guarantee: *"If this exact restaurant basket is cheaper on any competing delivery app at this moment, we automatically refund the difference + ₹50 directly to your balance."*
-   - *Failsafe System*: **Grace-Period Async Order Dispatch** grants a 5-minute background window for delayed UPI bank confirmations, preventing cart wipes and payment timeout drops (18.55% of drop-offs).
+3. **On-Time Delivery Guarantee (Late Delivery Wallet Credit)**:
+   - *Problem*: 31.62% of drop-offs happen when quoted delivery times are 40-55 minutes because users fear long delays.
+   - *Solution*: A clear, automated guarantee: If the order arrives more than 5 minutes past the promised delivery time, the user automatically receives a **₹50 credit** in their app wallet.
+   - *User Experience*: Prominently displayed next to the delivery time: *"On-Time Guarantee: Delivered by 8:45 PM or get ₹50 in your wallet automatically."*
+   - *Impact*: Eliminates hesitation during peak hours. If the food is delayed, the ₹50 wallet credit directly brings the customer back for a repeat order.
 
 ---
 
 ## 6. A/B Experimentation Framework
 
-$$\text{Hypothesis: Predictive intent-pipelining (11m ETA reduction), 1-tap basket fee neutralization, and a 10-minute price freeze will lift checkout conversion by } \ge \mathbf{3.0\% \text{ absolute}}.$$
+$$\text{Hypothesis: Auto-applied best coupons, one-tap in-app UPI payments, and an on-time delivery guarantee will lift checkout conversion by } \ge \mathbf{3.0\% \text{ absolute}}.$$
 
 - **Primary Metric**: Checkout-to-Order Conversion Rate (%) — Target increase from **29.37% baseline to 32.87%**.
-- **Secondary Metrics**: Average Order Value (AOV lift +6% to +10%), Checkout Dwell Time (reduction in hesitation), Day 30 Repeat Order Rate.
+- **Secondary Metrics**: Payment Gateway Success Rate (targeting a 50% reduction in timeouts), Average Order Value (AOV), Day 30 Repeat Order Rate.
 - **Guardrail Metrics**:
-  - *Net Contribution Margin per Order*: Must not decline by more than -₹8.00 per order (offset by basket neutralizer AOV growth).
-  - *Merchant Food Waste Rate*: Must remain below 0.5% (validating zero-waste soft-hold release).
-  - *Courier Restaurant Dwell Time*: Courier wait time at merchant must not exceed 4.5 minutes.
+  - *Net Contribution Margin per Order*: Must not decline by more than -₹6.00 per order after discount subsidies.
+  - *On-Time Delivery Breach Rate*: Late deliveries triggering the ₹50 wallet compensation must remain below 3.5% of fulfilled orders.
 - **Statistical Power and Sample Sizing**:
   - Significance Level: $\alpha = 0.05$ (95% Confidence Level)
   - Statistical Power: $1 - \beta = 0.80$ (80% Power)
@@ -345,14 +337,14 @@ http://localhost:8080
 > **Product Analytics Project | CartToFork: Food Delivery Product Funnel & Retention Analytics**  
 > • Built an end-to-end product funnel tracking 41,000+ sessions and 4,200 orders across 5 metros, identifying a **70.6% checkout abandonment rate** as the primary conversion bottleneck (10,000+ lost high-intent sessions).  
 > • Executed diagnostic root-cause analytics isolating delivery ETA delays >40 minutes (31.6% of drops), fee shock >20% of cart (25.7%), and multi-app price comparison (18.9%) as top friction drivers.  
-> • Designed **"Project Clarity"** featuring 3 industry-first mechanisms: predictive intent-pipelining (saving 11m on checkout ETA), a 1-tap algorithmic basket fee neutralizer, and a 10-minute price freeze with cross-app parity guarantees.  
+> • Designed **"Project Clarity"** featuring 3 practical checkout optimizations: auto-applied best coupons (reducing fee shock), one-tap in-app UPI checkout (eliminating payment app-switching failures), and an on-time delivery guarantee (₹50 wallet credit if late, neutralizing ETA hesitation).  
 > • Formulated an A/B experiment plan with statistical power sizing (25,300 sessions, MDE 2.5%, $\alpha = 0.05$), projecting **+₹3.48M in annualized GMV lift**.
 
 ### Key Discussion Points:
 1. **Focus on Late-Funnel Conversion**: Improving checkout completion provides significantly higher return than expanding top-of-funnel acquisition, as checkout users have already demonstrated purchase intent.
-2. **Beyond Standard Industry Patterns**: Rather than proposing existing features (such as static progress bars or standard priority fees), we developed predictive pre-pipelining during checkout dwell time and 1-tap marginal fee neutralization.
+2. **Realistic, High-Impact Interventions**: Instead of complex unproven features, we focused on three friction points with direct solutions: auto-applied coupons, native 1-tap UPI payments, and an automated on-time SLA guarantee.
 3. **Discount Dynamics**: Discounts increase immediate conversion (48.6% vs 16.6%), but organic first-time customers re-order 5 days faster, indicating stronger baseline retention.
-4. **Actionable Product Recommendations**: Analysis is tied directly to testable feature changes and explicit guardrails (unit contribution margin, courier dwell times, and zero food waste).
+4. **Actionable Product Recommendations**: Analysis is tied directly to testable feature changes and explicit guardrails (unit contribution margin and delivery SLA limits).
 
 ---
 
