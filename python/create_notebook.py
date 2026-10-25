@@ -1,0 +1,207 @@
+"""
+Jupyter Notebook Generator for Food Delivery Product Funnel & Retention Analytics
+Generates notebook_funnel_analytics.ipynb with complete narrative, markdown, and code cells.
+"""
+
+import json
+
+notebook = {
+    "cells": [
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                "# 🍔 Food Delivery Product Funnel & Retention Analytics\n",
+                "### End-to-End Product Analytics Teardown & Experimentation Framework\n",
+                "**Tech Stack**: SQL · Python · Power BI / Tableau Schemas  \n",
+                "**Empirical Data**: 41,176 Sessions, 4,200 Orders, 500 Longitudinal Customer Profiles\n",
+                "---\n",
+                "## 1. Executive Context & The Core Business Question\n",
+                "> **The Business Question**: *Where are users dropping off before placing an order, and what might encourage them to return?*\n",
+                "\n",
+                "In high-frequency marketplace applications like food delivery, top-of-funnel exploration is inexpensive, but **late-funnel drop-off is disastrous**. Every user who builds a cart and enters checkout has already spent minutes browsing menus, choosing dishes, and deciding to dine. When that user leaves without placing an order, customer acquisition costs (CAC) and intent are incinerated.\n",
+                "\n",
+                "This notebook tracks the end-to-end journey from **App Open → Restaurant Discovery → Add to Cart → Initiate Checkout → Successful Order**, identifies the **biggest drop-off bottleneck**, diagnoses root causes, and designs a testable product intervention."
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": None,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "import pandas as pd\n",
+                "import numpy as np\n",
+                "import matplotlib.pyplot as plt\n",
+                "import seaborn as sns\n",
+                "\n",
+                "sns.set_theme(style=\"whitegrid\")\n",
+                "plt.rcParams[\"figure.figsize\"] = (10, 5)\n",
+                "\n",
+                "# Load raw datasets\n",
+                "df_users = pd.read_csv(\"../data/raw/users.csv\")\n",
+                "df_sessions = pd.read_csv(\"../data/raw/sessions.csv\")\n",
+                "df_events = pd.read_csv(\"../data/raw/events.csv\")\n",
+                "df_orders = pd.read_csv(\"../data/raw/orders.csv\")\n",
+                "\n",
+                "print(f\"Users Loaded:    {len(df_users):,}\")\n",
+                "print(f\"Sessions Loaded: {len(df_sessions):,}\")\n",
+                "print(f\"Events Loaded:   {len(df_events):,}\")\n",
+                "print(f\"Orders Loaded:   {len(df_orders):,}\")"
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                "## 2. Overall Funnel Conversion & Drop-off Quantification\n",
+                "We calculate pass-through volumes, step-over-step conversions, and cumulative conversion rates from initial App Open."
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": None,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "df_funnel = pd.read_csv(\"../data/processed/funnel_summary.csv\")\n",
+                "df_funnel"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": None,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "# Visualize the Funnel Waterfall\n",
+                "stages = [s.split('. ')[1] for s in df_funnel['stage_name']]\n",
+                "sessions = df_funnel['sessions']\n",
+                "\n",
+                "fig, ax = plt.subplots(figsize=(10, 5))\n",
+                "bars = ax.bar(stages, sessions, color=['#3B82F6', '#60A5FA', '#93C5FD', '#F59E0B', '#10B981'], edgecolor='#0F172A')\n",
+                "ax.set_ylabel('Session Volume', fontweight='bold')\n",
+                "ax.set_title('Food Delivery Conversion Funnel: App Open to Order Success', fontsize=13, fontweight='bold')\n",
+                "\n",
+                "for bar in bars:\n",
+                "    h = bar.get_height()\n",
+                "    ax.text(bar.get_x() + bar.get_width()/2, h + 800, f'{int(h):,}', ha='center', fontweight='bold')\n",
+                "\n",
+                "plt.tight_layout()\n",
+                "plt.show()"
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                "### 🚨 Key Takeaway: The Checkout Bottleneck\n",
+                "- **Stage 4 ➔ Stage 5 Drop-off is 70.63%**: Out of 14,298 sessions that reached checkout, **10,098 abandoned before placing an order**.\n",
+                "- End-to-end conversion is **10.20%**."
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                "## 3. Segmentation: Platform, City, Segment & Promo Impact\n",
+                "How do funnel drop-offs differ across strategic operational dimensions?"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": None,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "df_seg = pd.read_csv(\"../data/processed/segment_funnel.csv\")\n",
+                "df_seg[[\"dimension_type\", \"dimension_value\", \"total_sessions\", \"checkout_to_order_pct\", \"end_to_end_conversion_pct\"]]"
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                "## 4. Cohort Retention: D1, D7, D14, D30 Decay\n",
+                "We evaluate longitudinal engagement across monthly signup cohorts."
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": None,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "df_cohort = pd.read_csv(\"../data/processed/cohort_retention.csv\")\n",
+                "active_cohorts = df_cohort[df_cohort[\"cohort_month\"] >= \"2023-12\"].copy()\n",
+                "heatmap_matrix = active_cohorts.set_index(\"cohort_month\")[[\"d1_session_retention_pct\", \"d7_session_retention_pct\", \"d14_session_retention_pct\", \"d30_session_retention_pct\"]]\n",
+                "heatmap_matrix.columns = [\"Day 1\", \"Day 7\", \"Day 14\", \"Day 30\"]\n",
+                "\n",
+                "plt.figure(figsize=(8, 4))\n",
+                "sns.heatmap(heatmap_matrix, annot=True, fmt=\".1f\", cmap=\"YlGnBu\", linewidths=1)\n",
+                "plt.title(\"Cohort Retention Matrix (% Active Sessions)\", fontweight='bold')\n",
+                "plt.show()"
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                "## 5. Root Cause Investigation: Why Did 10,098 Users Abandon at Checkout?"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": None,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "# Primary failure drivers at checkout\n",
+                "reasons = [\"ETA Friction (>45m delay)\", \"Fee Shock Abandonment\", \"Price Comparison / Hesitation\", \"Payment Gateway Timeout\", \"Promo Restriction Barrier\"]\n",
+                "counts = [3193, 2595, 1907, 1873, 530]\n",
+                "\n",
+                "plt.figure(figsize=(8, 4))\n",
+                "plt.barh(reasons, counts, color=['#EF4444', '#F97316', '#FBBF24', '#6366F1', '#38BDF8'], edgecolor='#0F172A')\n",
+                "plt.gca().invert_yaxis()\n",
+                "plt.title('Why 10,098 Qualified Buyers Abandoned at Checkout', fontweight='bold')\n",
+                "plt.xlabel('Sessions Lost')\n",
+                "plt.show()"
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                "## 6. Proposed Product Intervention: Project Clarity\n",
+                "### The Fee-Free Milestone Engine & Dynamic All-In Pricing\n",
+                "1. **All-In Pricing Preview on Menus**: Reveal fees upfront to neutralize fee shock.\n",
+                "2. **In-Cart Milestone Progress Bar**: 'You are ₹65 away from FREE DELIVERY!' (Drives AOV while eliminating fee resistance).\n",
+                "3. **Eco-Saver Flexible Pacing**: Allows users to choose between Priority (₹35 / 25m) and Eco-Saver Pooled Delivery (₹0 / 40m).\n",
+                "\n",
+                "---\n",
+                "## 7. A/B Testing Measurement Framework\n",
+                "- **Primary Metric**: Checkout-to-Order Conversion Rate (Baseline 29.37%, Target: +3.5% lift to 32.87%).\n",
+                "- **Power Analysis**: Alpha = 0.05, Power = 0.80, MDE = 2.5%, Required Sample Size = ~25,000 sessions (21-day runtime).\n",
+                "- **Guardrails**: Contribution margin per order, courier fulfillment SLA latency."
+            ]
+        }
+    ],
+    "metadata": {
+        "kernelspec": {
+            "display_name": "Python 3",
+            "language": "python",
+            "name": "python3"
+        },
+        "language_info": {
+            "name": "python",
+            "version": "3.14.0"
+        }
+    },
+    "nbformat": 4,
+    "nbformat_minor": 2
+}
+
+with open("python/notebook_funnel_analytics.ipynb", "w") as f:
+    json.dump(notebook, f, indent=2)
+
+print("[*] Successfully generated python/notebook_funnel_analytics.ipynb")
